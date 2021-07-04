@@ -265,15 +265,16 @@ class Validator(SchemaVisitor[ValidationResult]):
         if schema.props.keys is Nil:
             return result
 
-        for key, val in schema.props.keys.items():
-            if key is ...:
+        for key, (val, is_optional) in schema.props.keys.items():
+            if is_ellipsis(key):
                 continue
-            if key not in value:
-                result.add_error(MissingKeyValidationError(path, key))
-            else:
+            if key in value:
                 nested_path = deepcopy(path)[key]
                 res = val.__accept__(self, value=value[key], path=nested_path, **kwargs)
                 result.add_errors(res.get_errors())
+            else:
+                if not is_optional:
+                    result.add_error(MissingKeyValidationError(path, key))
 
         if (... not in schema.props.keys) and (len(schema.props.keys) != len(value)):
             for key, val in value.items():

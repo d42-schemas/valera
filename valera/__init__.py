@@ -19,6 +19,8 @@ def validate(schema: GenericSchema, value: Any, **kwargs: Any) -> ValidationResu
 
 
 def eq(schema: GenericSchema, value: Any) -> bool:
+    if isinstance(value, Schema):
+        return isinstance(value, schema.__class__) and (schema.props == value.props)
     return not validate(schema, value=value).has_errors()
 
 
