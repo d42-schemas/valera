@@ -1,3 +1,4 @@
+import re
 from copy import deepcopy
 from math import isclose
 from typing import Any, List, Optional, Type, cast
@@ -30,6 +31,7 @@ from .errors import (
     MinLengthValidationError,
     MinValueValidationError,
     MissingKeyValidationError,
+    RegexValidationError,
     SchemaMismatchValidationError,
     SubstrValidationError,
     TypeValidationError,
@@ -165,6 +167,12 @@ class Validator(SchemaVisitor[ValidationResult]):
 
         if schema.props.value is not Nil:
             if error := self._validate_value(path, value, schema.props.value):
+                return result.add_error(error)
+
+        if schema.props.pattern is not Nil:
+            match_object = re.search(schema.props.pattern, value)
+            if match_object is None:
+                error = RegexValidationError(path, value, schema.props.pattern)
                 return result.add_error(error)
 
         if schema.props.len is not Nil:

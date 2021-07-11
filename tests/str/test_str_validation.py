@@ -9,6 +9,7 @@ from valera.errors import (
     LengthValidationError,
     MaxLengthValidationError,
     MinLengthValidationError,
+    RegexValidationError,
     SubstrValidationError,
     TypeValidationError,
     ValueValidationError,
@@ -257,4 +258,30 @@ def test_str_contains_validation_error(value: str):
     with then:
         assert result.get_errors() == [
             SubstrValidationError(PathHolder(), value, substr)
+        ]
+
+
+def test_str_regex_validation():
+    with given:
+        pattern = "[a-z]+"
+        value = "banana"
+
+    with when:
+        result = validate(schema.str.regex(pattern), value)
+
+    with then:
+        assert result.get_errors() == []
+
+
+def test_str_regex_validation_error():
+    with given:
+        pattern = "[0-9]+"
+        value = "banana"
+
+    with when:
+        result = validate(schema.str.regex(pattern), value)
+
+    with then:
+        assert result.get_errors() == [
+            RegexValidationError(PathHolder(), value, pattern)
         ]

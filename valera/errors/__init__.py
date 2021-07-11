@@ -8,7 +8,8 @@ __all__ = ("ValidationError", "TypeValidationError", "ValueValidationError",
            "MinValueValidationError", "MaxValueValidationError", "LengthValidationError",
            "MinLengthValidationError", "MaxLengthValidationError", "AlphabetValidationError",
            "IndexValidationError", "ExtraElementValidationError", "MissingKeyValidationError",
-           "ExtraKeyValidationError", "SchemaMismatchValidationError", "SubstrValidationError",)
+           "ExtraKeyValidationError", "SchemaMismatchValidationError", "SubstrValidationError",
+           "RegexValidationError",)
 
 
 class ValidationError(ABC):
@@ -161,3 +162,14 @@ class SubstrValidationError(ValidationError):
     def __repr__(self) -> str:
         return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
                 f"{self._substr!r})")
+
+
+class RegexValidationError(ValidationError):
+    def __init__(self, path: PathHolder, actual_value: Any, pattern: str) -> None:
+        self._path = path
+        self._actual_value = actual_value
+        self._pattern = pattern
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
+                f"{self._pattern!r})")

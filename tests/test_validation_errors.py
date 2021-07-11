@@ -12,6 +12,7 @@ from valera.errors import (
     MaxValueValidationError,
     MinLengthValidationError,
     MinValueValidationError,
+    RegexValidationError,
     SchemaMismatchValidationError,
     SubstrValidationError,
     TypeValidationError,
@@ -119,9 +120,17 @@ def test_validation_schema_mismatch_error():
         assert repr(res) == "SchemaMismatchValidationError(PathHolder(), 'key', (schema.int,))"
 
 
-def test_validation_substring_error():
+def test_validation_substr_error():
     with when:
         res = SubstrValidationError(PathHolder(), "value", "substr")
 
     with then:
         assert repr(res) == "SubstrValidationError(PathHolder(), 'value', 'substr')"
+
+
+def test_validation_regex_error():
+    with when:
+        res = RegexValidationError(PathHolder(), "value", ".*")
+
+    with then:
+        assert repr(res) == "RegexValidationError(PathHolder(), 'value', '.*')"
