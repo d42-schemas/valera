@@ -9,6 +9,7 @@ from valera.errors import (
     LengthValidationError,
     MaxLengthValidationError,
     MinLengthValidationError,
+    SubstrValidationError,
     TypeValidationError,
     ValueValidationError,
 )
@@ -210,4 +211,50 @@ def test_str_len_alphabet_validation_error():
         assert result.get_errors() == [
             LengthValidationError(PathHolder(), value, length),
             AlphabetValidationError(PathHolder(), value, alphabet),
+        ]
+
+
+@pytest.mark.parametrize("value", [
+    "banana",
+    " banana",
+    "banana ",
+    " banana ",
+])
+def test_str_contains_validation(value: str):
+    with given:
+        substr = "banana"
+
+    with when:
+        result = validate(schema.str.contains(substr), value)
+
+    with then:
+        assert result.get_errors() == []
+
+
+def test_str_contains_empty_validation():
+    with given:
+        value = "banana"
+        substr = ""
+
+    with when:
+        result = validate(schema.str.contains(substr), value)
+
+    with then:
+        assert result.get_errors() == []
+
+
+@pytest.mark.parametrize("value", [
+    "",
+    "ananab",
+])
+def test_str_contains_validation_error(value: str):
+    with given:
+        substr = "banana"
+
+    with when:
+        result = validate(schema.str.contains(substr), value)
+
+    with then:
+        assert result.get_errors() == [
+            SubstrValidationError(PathHolder(), value, substr)
         ]

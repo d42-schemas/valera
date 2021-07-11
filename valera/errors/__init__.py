@@ -8,7 +8,7 @@ __all__ = ("ValidationError", "TypeValidationError", "ValueValidationError",
            "MinValueValidationError", "MaxValueValidationError", "LengthValidationError",
            "MinLengthValidationError", "MaxLengthValidationError", "AlphabetValidationError",
            "IndexValidationError", "ExtraElementValidationError", "MissingKeyValidationError",
-           "ExtraKeyValidationError", "SchemaMismatchValidationError",)
+           "ExtraKeyValidationError", "SchemaMismatchValidationError", "SubstrValidationError",)
 
 
 class ValidationError(ABC):
@@ -150,3 +150,14 @@ class SchemaMismatchValidationError(ValidationError):
     def __repr__(self) -> str:
         return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
                 f"{self._expected_schemas!r})")
+
+
+class SubstrValidationError(ValidationError):
+    def __init__(self, path: PathHolder, actual_value: Any, substr: str) -> None:
+        self._path = path
+        self._actual_value = actual_value
+        self._substr = substr
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
+                f"{self._substr!r})")

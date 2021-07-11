@@ -31,6 +31,7 @@ from .errors import (
     MinValueValidationError,
     MissingKeyValidationError,
     SchemaMismatchValidationError,
+    SubstrValidationError,
     TypeValidationError,
     ValidationError,
     ValueValidationError,
@@ -175,6 +176,10 @@ class Validator(SchemaVisitor[ValidationResult]):
         if schema.props.max_len is not Nil:
             if len(value) > schema.props.max_len:
                 result.add_error(MaxLengthValidationError(path, value, schema.props.max_len))
+
+        if schema.props.substr is not Nil:
+            if schema.props.substr not in value:
+                result.add_error(SubstrValidationError(path, value, schema.props.substr))
 
         if schema.props.alphabet is not Nil:
             alphabet = set(schema.props.alphabet)
