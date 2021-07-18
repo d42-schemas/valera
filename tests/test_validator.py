@@ -1,7 +1,54 @@
 from baby_steps import then, when
 from district42 import schema
+from pytest import raises
 
-from valera import eq
+from valera import ValidationException, ValidationResult, eq, validate, validate_or_fail
+
+
+def test_validator_validate_pass():
+    with when:
+        result = validate(schema.int, 42)
+
+    with then:
+        assert isinstance(result, ValidationResult)
+        assert not result.has_errors()
+
+
+def test_validator_validate_fail():
+    with when:
+        result = validate(schema.int, "42")
+
+    with then:
+        assert isinstance(result, ValidationResult)
+        assert result.has_errors()
+
+
+def test_validator_validate_or_fail():
+    with when:
+        result = validate_or_fail(schema.int, 42)
+
+    with then:
+        assert result is True
+
+
+def test_validator_validate_or_fail_error():
+    with when, raises(Exception) as exception:
+        validate_or_fail(schema.dict, "")
+
+    with then:
+        assert exception.type is ValidationException
+        assert str(exception.value) == ("\n - Value '' must be <class 'dict'>, "
+                                        "but <class 'str'> given")
+
+
+def test_validator_validate_or_fail_multiline():
+    with when, raises(Exception) as exception:
+        validate_or_fail(schema.dict({"id": schema.int, "name": schema.str}), {})
+
+    with then:
+        assert exception.type is ValidationException
+        assert str(exception.value) == ("\n - Key _['id'] does not exist"
+                                        "\n - Key _['name'] does not exist")
 
 
 def test_validator_eq():

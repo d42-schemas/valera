@@ -28,6 +28,22 @@ def formatter() -> Formatter:
     return Formatter()
 
 
+def test_formatter_default_root():
+    with when:
+        formatter = Formatter()
+
+    with then:
+        assert formatter.root == "_"
+
+
+def test_formatter_custom_root():
+    with when:
+        formatter = Formatter("#")
+
+    with then:
+        assert formatter.root == "#"
+
+
 @pytest.mark.parametrize(("path", "formatted"), [
     (_, "Value 'banana' must be <class 'int'>, but <class 'str'> given"),
     (_["id"], "Value 'banana' at _['id'] must be <class 'int'>, but <class 'str'> given")

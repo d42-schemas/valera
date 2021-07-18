@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Any, Sequence
 
 from th import PathHolder
 
+from ._abstract_formatter import AbstractFormatter
 from .errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
@@ -23,12 +23,6 @@ from .errors import (
 )
 
 __all__ = ("Formatter",)
-
-
-class AbstractFormatter(ABC):
-    @abstractmethod
-    def format_type_error(self, error: TypeValidationError) -> str:
-        pass
 
 
 class Formatter(AbstractFormatter):
