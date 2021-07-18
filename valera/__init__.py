@@ -10,7 +10,7 @@ from ._validator import Validator
 from ._version import version
 
 __version__ = version
-__all__ = ("validate", "validate_or_fail", "Validator", "ValidationResult",
+__all__ = ("validate", "validate_or_fail", "eq", "Validator", "ValidationResult",
            "ValidationException", "Formatter", "AbstractFormatter",)
 
 
