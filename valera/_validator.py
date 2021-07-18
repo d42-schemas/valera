@@ -1,7 +1,7 @@
 import re
 from copy import deepcopy
 from math import isclose
-from typing import Any, List, Optional, Type, cast
+from typing import Any, Callable, List, Optional, Type, cast
 
 from district42 import GenericSchema, SchemaVisitor
 from district42.types import (
@@ -43,9 +43,11 @@ __all__ = ("Validator",)
 
 
 class Validator(SchemaVisitor[ValidationResult]):
-    def __init__(self) -> None:
-        self._validation_result_factory = ValidationResult
-        self._path_holder_factory = PathHolder
+    def __init__(self, *,
+                 validation_result_factory: Callable[[], ValidationResult] = ValidationResult,
+                 path_holder_factory: Callable[[], PathHolder] = PathHolder) -> None:
+        self._validation_result_factory = validation_result_factory
+        self._path_holder_factory = path_holder_factory
 
     def _validate_type(self, path: PathHolder, value: Any,
                        expected_type: Type[Any]) -> Optional[ValidationError]:

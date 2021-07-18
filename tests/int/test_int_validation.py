@@ -139,3 +139,18 @@ def test_int_min_max_less_value_validation_error():
         assert result.get_errors() == [
             MinValueValidationError(PathHolder(), actual_value, min_value)
         ]
+
+
+def test_int_type_validation_kwargs():
+    with given:
+        expected_value = 42
+        actual_value = 43
+        path = PathHolder().items[0]["key"]
+
+    with when:
+        result = validate(schema.int(expected_value), actual_value, path=path)
+
+    with then:
+        assert result.get_errors() == [
+            ValueValidationError(path, actual_value, expected_value)
+        ]

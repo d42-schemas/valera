@@ -186,3 +186,17 @@ def test_list_of_min_max_len_validation_error(min_length: int, max_length: int):
 
     with then:
         assert len(result.get_errors()) == 1
+
+
+def test_list_of_type_validation_kwargs():
+    with given:
+        value = 3.14
+        path = PathHolder().items[0]["key"]
+
+    with when:
+        result = validate(schema.list(schema.int), [42, value], path=path)
+
+    with then:
+        assert result.get_errors() == [
+            TypeValidationError(path[1], value, int)
+        ]

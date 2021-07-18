@@ -70,3 +70,17 @@ def test_any_types_validation_error():
         assert result.get_errors() == [
             SchemaMismatchValidationError(PathHolder(), value, types)
         ]
+
+
+def test_any_type_validation_kwargs():
+    with given:
+        actual_value = False
+        path = PathHolder().items[0]["key"]
+
+    with when:
+        result = validate(schema.any(schema.none), actual_value, path=path)
+
+    with then:
+        assert result.get_errors() == [
+            SchemaMismatchValidationError(path, actual_value, (schema.none,))
+        ]

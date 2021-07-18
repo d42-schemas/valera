@@ -9,7 +9,7 @@ from ._validator import Validator
 from ._version import version
 
 __version__ = version
-__all__ = ("validate", "Validator", "ValidationResult", "Formatter",)
+__all__ = ("validate", "eq", "Validator", "ValidationResult", "Formatter",)
 
 
 _validator = Validator()

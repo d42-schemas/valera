@@ -195,3 +195,21 @@ def test_dict_nested_missing_key_valudidation_error():
         assert result.get_errors() == [
             MissingKeyValidationError(path, value["result"], "name")
         ]
+
+
+def test_dict_validation_kwargs():
+    with given:
+        sch = schema.dict({
+            "id": schema.int,
+            "name": schema.str,
+        })
+        value = {"id": 1}
+        path = PathHolder().items[0]["key"]
+
+    with when:
+        result = validate(sch, value, path=path)
+
+    with then:
+        assert result.get_errors() == [
+            MissingKeyValidationError(path, value, "name")
+        ]
