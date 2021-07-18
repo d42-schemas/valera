@@ -12,6 +12,7 @@ from valera.errors import (
     MaxValueValidationError,
     MinLengthValidationError,
     MinValueValidationError,
+    MissingKeyValidationError,
     RegexValidationError,
     SchemaMismatchValidationError,
     SubstrValidationError,
@@ -88,38 +89,6 @@ def test_validation_alphabet_error():
         assert repr(res) == "AlphabetValidationError(PathHolder(), 'banana!', 'abn')"
 
 
-def test_validation_index_error():
-    with when:
-        res = IndexValidationError(PathHolder(), 0)
-
-    with then:
-        assert repr(res) == "IndexValidationError(PathHolder(), 0)"
-
-
-def test_validation_extra_element_error():
-    with when:
-        res = ExtraElementValidationError(PathHolder(), 0)
-
-    with then:
-        assert repr(res) == "ExtraElementValidationError(PathHolder(), 0)"
-
-
-def test_validation_extra_key_error():
-    with when:
-        res = ExtraKeyValidationError(PathHolder(), "key")
-
-    with then:
-        assert repr(res) == "ExtraKeyValidationError(PathHolder(), 'key')"
-
-
-def test_validation_schema_mismatch_error():
-    with when:
-        res = SchemaMismatchValidationError(PathHolder(), "key", (IntSchema(),))
-
-    with then:
-        assert repr(res) == "SchemaMismatchValidationError(PathHolder(), 'key', (schema.int,))"
-
-
 def test_validation_substr_error():
     with when:
         res = SubstrValidationError(PathHolder(), "value", "substr")
@@ -134,3 +103,43 @@ def test_validation_regex_error():
 
     with then:
         assert repr(res) == "RegexValidationError(PathHolder(), 'value', '.*')"
+
+
+def test_validation_index_error():
+    with when:
+        res = IndexValidationError(PathHolder(), [], 0)
+
+    with then:
+        assert repr(res) == "IndexValidationError(PathHolder(), [], 0)"
+
+
+def test_validation_extra_element_error():
+    with when:
+        res = ExtraElementValidationError(PathHolder(), [1], 0)
+
+    with then:
+        assert repr(res) == "ExtraElementValidationError(PathHolder(), [1], 0)"
+
+
+def test_validation_missing__key_error():
+    with when:
+        res = MissingKeyValidationError(PathHolder(), {}, "key")
+
+    with then:
+        assert repr(res) == "MissingKeyValidationError(PathHolder(), {}, 'key')"
+
+
+def test_validation_extra_key_error():
+    with when:
+        res = ExtraKeyValidationError(PathHolder(), {"key": "1"}, "key")
+
+    with then:
+        assert repr(res) == "ExtraKeyValidationError(PathHolder(), {'key': '1'}, 'key')"
+
+
+def test_validation_schema_mismatch_error():
+    with when:
+        res = SchemaMismatchValidationError(PathHolder(), "key", (IntSchema(),))
+
+    with then:
+        assert repr(res) == "SchemaMismatchValidationError(PathHolder(), 'key', (schema.int,))"

@@ -3,12 +3,13 @@ from typing import Any
 from district42 import GenericSchema
 from district42.types import Schema
 
+from ._formatter import Formatter
 from ._validation_result import ValidationResult
 from ._validator import Validator
 from ._version import version
 
 __version__ = version
-__all__ = ("validate", "Validator", "ValidationResult",)
+__all__ = ("validate", "Validator", "ValidationResult", "Formatter",)
 
 
 _validator = Validator()

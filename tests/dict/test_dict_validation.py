@@ -73,7 +73,9 @@ def test_dict_extra_key_validation_error():
         result = validate(sch, value)
 
     with then:
-        assert result.get_errors() == [ExtraKeyValidationError(PathHolder(), "id")]
+        assert result.get_errors() == [
+            ExtraKeyValidationError(PathHolder(), value, "id")
+        ]
 
 
 def test_dict_missing_key_validation_error():
@@ -88,7 +90,9 @@ def test_dict_missing_key_validation_error():
         result = validate(sch, value)
 
     with then:
-        assert result.get_errors() == [MissingKeyValidationError(PathHolder(), "name")]
+        assert result.get_errors() == [
+            MissingKeyValidationError(PathHolder(), value, "name")
+        ]
 
 
 @pytest.mark.parametrize("value", [
@@ -164,7 +168,9 @@ def test_dict_nested_extra_key_valudidation_error():
 
     with then:
         path = PathHolder()["result"]
-        assert result.get_errors() == [ExtraKeyValidationError(path, "name")]
+        assert result.get_errors() == [
+            ExtraKeyValidationError(path, value["result"], "name")
+        ]
 
 
 def test_dict_nested_missing_key_valudidation_error():
@@ -186,4 +192,6 @@ def test_dict_nested_missing_key_valudidation_error():
 
     with then:
         path = PathHolder()["result"]
-        assert result.get_errors() == [MissingKeyValidationError(path, "name")]
+        assert result.get_errors() == [
+            MissingKeyValidationError(path, value["result"], "name")
+        ]

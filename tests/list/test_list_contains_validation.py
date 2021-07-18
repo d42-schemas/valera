@@ -52,7 +52,7 @@ def test_list_contains_head_validation_incorrect_element_error():
     with then:
         assert result.get_errors() == [
             ValueValidationError(PathHolder()[0], actual_value=value[0], expected_value=1),
-            IndexValidationError(PathHolder(), index=1)
+            IndexValidationError(PathHolder(), actual_value=value, index=1)
         ]
 
 
@@ -66,7 +66,7 @@ def test_list_contains_head_validation_missing_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), index=1)
+            IndexValidationError(PathHolder(), actual_value=value, index=1)
         ]
 
 
@@ -112,7 +112,7 @@ def test_list_contains_tail_validation_incorrect_element_error():
     with then:
         assert result.get_errors() == [
             ValueValidationError(PathHolder()[0], actual_value=value[0], expected_value=1),
-            IndexValidationError(PathHolder(), index=1),
+            IndexValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -126,7 +126,7 @@ def test_list_contains_tail_validation_missing_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), index=1),
+            IndexValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -200,7 +200,7 @@ def test_list_contains_validation_extra_head_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), index=2)
+            IndexValidationError(PathHolder(), actual_value=value, index=2)
         ]
 
 
@@ -243,7 +243,7 @@ def test_list_contains_validation_missing_tail_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), index=1),
+            IndexValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -258,7 +258,7 @@ def test_list_contains_validation_missing_head_element_error():
     with then:
         assert result.get_errors() == [
             ValueValidationError(PathHolder()[0], actual_value=2, expected_value=1),
-            IndexValidationError(PathHolder(), index=1),
+            IndexValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -272,18 +272,19 @@ def test_list_contains_validation_incorrect_order_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), index=2),
+            IndexValidationError(PathHolder(), actual_value=value, index=2),
         ]
 
 
 def test_list_contains_validation_no_elements_error():
     with given:
+        value = []
         sch = schema.list([..., schema.int, ...])
 
     with when:
-        result = validate(sch, [])
+        result = validate(sch, value)
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), index=0),
+            IndexValidationError(PathHolder(), actual_value=value, index=0),
         ]

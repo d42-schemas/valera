@@ -89,7 +89,7 @@ def test_list_more_element_validation_error():
 
     with then:
         assert result.get_errors() == [
-            ExtraElementValidationError(PathHolder(), index=0),
+            ExtraElementValidationError(PathHolder(), actual_value=value, index=0),
         ]
 
 
@@ -102,8 +102,8 @@ def test_list_more_elements_validation_error():
 
     with then:
         assert result.get_errors() == [
-            ExtraElementValidationError(PathHolder(), index=1),
-            ExtraElementValidationError(PathHolder(), index=2),
+            ExtraElementValidationError(PathHolder(), actual_value=value, index=1),
+            ExtraElementValidationError(PathHolder(), actual_value=value, index=2),
         ]
 
 
@@ -116,7 +116,7 @@ def test_list_less_elements_validation_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), index=2),
+            IndexValidationError(PathHolder(), actual_value=value, index=2),
         ]
 
 

@@ -1,175 +1,233 @@
-from abc import ABC
-from typing import Any, Tuple, Type
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any, Tuple, Type
 
 from district42 import GenericSchema
 from th import PathHolder
 
+if TYPE_CHECKING:
+    from .._formatter import Formatter
+
 __all__ = ("ValidationError", "TypeValidationError", "ValueValidationError",
            "MinValueValidationError", "MaxValueValidationError", "LengthValidationError",
            "MinLengthValidationError", "MaxLengthValidationError", "AlphabetValidationError",
-           "IndexValidationError", "ExtraElementValidationError", "MissingKeyValidationError",
-           "ExtraKeyValidationError", "SchemaMismatchValidationError", "SubstrValidationError",
-           "RegexValidationError",)
+           "SubstrValidationError", "RegexValidationError", "IndexValidationError",
+           "ExtraElementValidationError", "MissingKeyValidationError", "ExtraKeyValidationError",
+           "SchemaMismatchValidationError",)
 
 
 class ValidationError(ABC):
     def __eq__(self, other: Any) -> bool:
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+        return isinstance(other, self.__class__) and (self.__dict__ == other.__dict__)
+
+    @abstractmethod
+    def format(self, formatter: "Formatter") -> str:
+        pass
 
 
 class TypeValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, expected_type: Type[Any]) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._expected_type = expected_type
+        self.path = path
+        self.actual_value = actual_value
+        self.expected_type = expected_type
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_type_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._expected_type!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.expected_type!r})")
 
 
 class ValueValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, expected_value: Any) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._expected_value = expected_value
+        self.path = path
+        self.actual_value = actual_value
+        self.expected_value = expected_value
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_value_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._expected_value!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.expected_value!r})")
 
 
 class MinValueValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, min_value: Any) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._min_value = min_value
+        self.path = path
+        self.actual_value = actual_value
+        self.min_value = min_value
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_min_value_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._min_value!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.min_value!r})")
 
 
 class MaxValueValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, max_value: Any) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._max_value = max_value
+        self.path = path
+        self.actual_value = actual_value
+        self.max_value = max_value
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_max_value_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._max_value!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.max_value!r})")
 
 
 class LengthValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, length: int) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._length = length
+        self.path = path
+        self.actual_value = actual_value
+        self.length = length
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_length_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._length!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.length!r})")
 
 
 class MinLengthValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, min_length: int) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._min_length = min_length
+        self.path = path
+        self.actual_value = actual_value
+        self.min_length = min_length
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_min_length_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._min_length!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.min_length!r})")
 
 
 class MaxLengthValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, max_length: int) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._max_length = max_length
+        self.path = path
+        self.actual_value = actual_value
+        self.max_length = max_length
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_max_length_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._max_length!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.max_length!r})")
 
 
 class AlphabetValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: str, alphabet: str) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._alphabet = alphabet
+        self.path = path
+        self.actual_value = actual_value
+        self.alphabet = alphabet
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_alphabet_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._alphabet!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.alphabet!r})")
+
+
+class SubstrValidationError(ValidationError):
+    def __init__(self, path: PathHolder, actual_value: Any, substr: str) -> None:
+        self.path = path
+        self.actual_value = actual_value
+        self.substr = substr
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_substr_error(self)
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.substr!r})")
+
+
+class RegexValidationError(ValidationError):
+    def __init__(self, path: PathHolder, actual_value: Any, pattern: str) -> None:
+        self.path = path
+        self.actual_value = actual_value
+        self.pattern = pattern
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_regex_error(self)
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.pattern!r})")
 
 
 class IndexValidationError(ValidationError):
-    def __init__(self, path: PathHolder, index: int) -> None:
-        self._path = path
-        self._index = index
+    def __init__(self, path: PathHolder, actual_value: Any, index: int) -> None:
+        self.path = path
+        self.actual_value = actual_value
+        self.index = index
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_index_error(self)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self._path!r}, {self._index!r})"
+        return f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, {self.index!r})"
 
 
 class ExtraElementValidationError(ValidationError):
-    def __init__(self, path: PathHolder, index: int) -> None:
-        self._path = path
-        self._index = index
+    def __init__(self, path: PathHolder, actual_value: Any, index: int) -> None:
+        self.path = path
+        self.actual_value = actual_value
+        self.index = index
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_extra_element_error(self)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self._path!r}, {self._index!r})"
+        return f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, {self.index!r})"
 
 
 class MissingKeyValidationError(ValidationError):
-    def __init__(self, path: PathHolder, key: Any) -> None:
-        self._path = path
-        self._missing_key = key
+    def __init__(self, path: PathHolder, actual_value: Any, key: Any) -> None:
+        self.path = path
+        self.actual_value = actual_value
+        self.missing_key = key
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_missing_key_error(self)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self._path!r}, {self._missing_key!r})"
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.missing_key!r})")
 
 
 class ExtraKeyValidationError(ValidationError):
-    def __init__(self, path: PathHolder, key: Any) -> None:
-        self._path = path
-        self._extra_key = key
+    def __init__(self, path: PathHolder, actual_value: Any, key: Any) -> None:
+        self.path = path
+        self.actual_value = actual_value
+        self.extra_key = key
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_extra_key_error(self)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self._path!r}, {self._extra_key!r})"
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.extra_key!r})")
 
 
 class SchemaMismatchValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any,
                  expected_schemas: Tuple[GenericSchema, ...]) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._expected_schemas = expected_schemas
+        self.path = path
+        self.actual_value = actual_value
+        self.expected_schemas = expected_schemas
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_schema_missmatch_error(self)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._expected_schemas!r})")
-
-
-class SubstrValidationError(ValidationError):
-    def __init__(self, path: PathHolder, actual_value: Any, substr: str) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._substr = substr
-
-    def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._substr!r})")
-
-
-class RegexValidationError(ValidationError):
-    def __init__(self, path: PathHolder, actual_value: Any, pattern: str) -> None:
-        self._path = path
-        self._actual_value = actual_value
-        self._pattern = pattern
-
-    def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}({self._path!r}, {self._actual_value!r}, "
-                f"{self._pattern!r})")
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.expected_schemas!r})")

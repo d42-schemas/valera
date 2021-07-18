@@ -43,7 +43,7 @@ __all__ = ("Validator",)
 
 
 class Validator(SchemaVisitor[ValidationResult]):
-    def __init__(self, ) -> None:
+    def __init__(self) -> None:
         self._validation_result_factory = ValidationResult
         self._path_holder_factory = PathHolder
 
@@ -71,7 +71,7 @@ class Validator(SchemaVisitor[ValidationResult]):
             try:
                 val = value[real_index]
             except IndexError:
-                errors.append(IndexValidationError(path, real_index))
+                errors.append(IndexValidationError(path, value, real_index))
                 break
             else:
                 nested_path = deepcopy(path)[real_index]
@@ -261,7 +261,7 @@ class Validator(SchemaVisitor[ValidationResult]):
         result.add_errors(errors)
         if len(value) > len(elements):
             for index in range(len(elements), len(value)):
-                result.add_error(ExtraElementValidationError(path, index))
+                result.add_error(ExtraElementValidationError(path, value, index))
 
         return result
 
@@ -287,12 +287,12 @@ class Validator(SchemaVisitor[ValidationResult]):
                 result.add_errors(res.get_errors())
             else:
                 if not is_optional:
-                    result.add_error(MissingKeyValidationError(path, key))
+                    result.add_error(MissingKeyValidationError(path, value, key))
 
         if (... not in schema.props.keys) and (len(schema.props.keys) != len(value)):
             for key, val in value.items():
                 if key not in schema.props.keys:
-                    result.add_error(ExtraKeyValidationError(path, key))
+                    result.add_error(ExtraKeyValidationError(path, value, key))
 
         return result
 
