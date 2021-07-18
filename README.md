@@ -5,6 +5,8 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/valera?style=flat-square)](https://pypi.python.org/pypi/valera/)
 [![Python Version](https://img.shields.io/pypi/pyversions/valera.svg?style=flat-square)](https://pypi.python.org/pypi/valera/)
 
+Validator for [district42](https://github.com/nikitanovosibirsk/district42) schema
+
 (!) Work in progress, breaking changes are possible until v2.0 is released
 
 ## Installation
