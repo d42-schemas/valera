@@ -24,12 +24,12 @@ from .errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
-    IndexValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
     MinLengthValidationError,
     MinValueValidationError,
+    MissingElementValidationError,
     MissingKeyValidationError,
     RegexValidationError,
     SchemaMismatchValidationError,
@@ -73,7 +73,7 @@ class Validator(SchemaVisitor[ValidationResult]):
             try:
                 val = value[real_index]
             except IndexError:
-                errors.append(IndexValidationError(path, value, real_index))
+                errors.append(MissingElementValidationError(path, value, real_index))
                 break
             else:
                 nested_path = deepcopy(path)[real_index]

@@ -6,12 +6,12 @@ from valera.errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
-    IndexValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
     MinLengthValidationError,
     MinValueValidationError,
+    MissingElementValidationError,
     MissingKeyValidationError,
     RegexValidationError,
     SchemaMismatchValidationError,
@@ -107,10 +107,10 @@ def test_validation_regex_error():
 
 def test_validation_index_error():
     with when:
-        res = IndexValidationError(PathHolder(), [], 0)
+        res = MissingElementValidationError(PathHolder(), [], 0)
 
     with then:
-        assert repr(res) == "IndexValidationError(PathHolder(), [], 0)"
+        assert repr(res) == "MissingElementValidationError(PathHolder(), [], 0)"
 
 
 def test_validation_extra_element_error():

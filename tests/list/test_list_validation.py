@@ -8,10 +8,10 @@ from th import PathHolder
 from valera import validate
 from valera.errors import (
     ExtraElementValidationError,
-    IndexValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MinLengthValidationError,
+    MissingElementValidationError,
     TypeValidationError,
 )
 
@@ -116,7 +116,7 @@ def test_list_less_elements_validation_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), actual_value=value, index=2),
+            MissingElementValidationError(PathHolder(), actual_value=value, index=2),
         ]
 
 

@@ -5,12 +5,12 @@ from .errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
-    IndexValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
     MinLengthValidationError,
     MinValueValidationError,
+    MissingElementValidationError,
     MissingKeyValidationError,
     RegexValidationError,
     SchemaMismatchValidationError,
@@ -64,7 +64,7 @@ class AbstractFormatter(ABC):
         pass
 
     @abstractmethod
-    def format_index_error(self, error: IndexValidationError) -> str:
+    def format_missing_element_error(self, error: MissingElementValidationError) -> str:
         pass
 
     @abstractmethod

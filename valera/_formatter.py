@@ -8,12 +8,12 @@ from .errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
-    IndexValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
     MinLengthValidationError,
     MinValueValidationError,
+    MissingElementValidationError,
     MissingKeyValidationError,
     RegexValidationError,
     SchemaMismatchValidationError,
@@ -113,7 +113,7 @@ class Formatter(AbstractFormatter):
         return (f"Value {actual_type}{formatted_path} "
                 f"must match pattern {error.pattern!r}, but {error.actual_value!r} given")
 
-    def format_index_error(self, error: IndexValidationError) -> str:
+    def format_missing_element_error(self, error: MissingElementValidationError) -> str:
         path = deepcopy(error.path)
         formatted_path = self._format_path(path[error.index])
         return f"Element {formatted_path} does not exist"

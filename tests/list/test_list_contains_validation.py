@@ -6,7 +6,7 @@ from district42 import schema
 from th import PathHolder
 
 from valera import validate
-from valera.errors import IndexValidationError, ValueValidationError
+from valera.errors import MissingElementValidationError, ValueValidationError
 
 
 @pytest.mark.parametrize("value", [
@@ -52,7 +52,7 @@ def test_list_contains_head_validation_incorrect_element_error():
     with then:
         assert result.get_errors() == [
             ValueValidationError(PathHolder()[0], actual_value=value[0], expected_value=1),
-            IndexValidationError(PathHolder(), actual_value=value, index=1)
+            MissingElementValidationError(PathHolder(), actual_value=value, index=1)
         ]
 
 
@@ -66,7 +66,7 @@ def test_list_contains_head_validation_missing_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), actual_value=value, index=1)
+            MissingElementValidationError(PathHolder(), actual_value=value, index=1)
         ]
 
 
@@ -112,7 +112,7 @@ def test_list_contains_tail_validation_incorrect_element_error():
     with then:
         assert result.get_errors() == [
             ValueValidationError(PathHolder()[0], actual_value=value[0], expected_value=1),
-            IndexValidationError(PathHolder(), actual_value=value, index=1),
+            MissingElementValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -126,7 +126,7 @@ def test_list_contains_tail_validation_missing_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), actual_value=value, index=1),
+            MissingElementValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -200,7 +200,7 @@ def test_list_contains_validation_extra_head_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), actual_value=value, index=2)
+            MissingElementValidationError(PathHolder(), actual_value=value, index=2)
         ]
 
 
@@ -243,7 +243,7 @@ def test_list_contains_validation_missing_tail_element_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), actual_value=value, index=1),
+            MissingElementValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -258,7 +258,7 @@ def test_list_contains_validation_missing_head_element_error():
     with then:
         assert result.get_errors() == [
             ValueValidationError(PathHolder()[0], actual_value=2, expected_value=1),
-            IndexValidationError(PathHolder(), actual_value=value, index=1),
+            MissingElementValidationError(PathHolder(), actual_value=value, index=1),
         ]
 
 
@@ -272,7 +272,7 @@ def test_list_contains_validation_incorrect_order_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), actual_value=value, index=2),
+            MissingElementValidationError(PathHolder(), actual_value=value, index=2),
         ]
 
 
@@ -286,5 +286,5 @@ def test_list_contains_validation_no_elements_error():
 
     with then:
         assert result.get_errors() == [
-            IndexValidationError(PathHolder(), actual_value=value, index=0),
+            MissingElementValidationError(PathHolder(), actual_value=value, index=0),
         ]

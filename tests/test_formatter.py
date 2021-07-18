@@ -8,12 +8,12 @@ from valera.errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
-    IndexValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
     MinLengthValidationError,
     MinValueValidationError,
+    MissingElementValidationError,
     MissingKeyValidationError,
     RegexValidationError,
     SchemaMismatchValidationError,
@@ -243,9 +243,9 @@ def test_format_regex_error(path: PathHolder, formatted: str, *, formatter: Form
     (_, "Element _[1] does not exist"),
     (_["id"], "Element _['id'][1] does not exist")
 ])
-def test_format_index_error(path: PathHolder, formatted: str, *, formatter: Formatter):
+def test_format_missing_element_error(path: PathHolder, formatted: str, *, formatter: Formatter):
     with given:
-        error = IndexValidationError(path, actual_value=["a"], index=1)
+        error = MissingElementValidationError(path, actual_value=["a"], index=1)
 
     with when:
         res = error.format(formatter)
@@ -275,7 +275,7 @@ def test_format_extra_element_error(path: PathHolder, formatted: str, *, formatt
 ])
 def test_format_missing_key_error(path: PathHolder, formatted: str, *, formatter: Formatter):
     with given:
-        error = MissingKeyValidationError(path, actual_value={}, key="missing_key")
+        error = MissingKeyValidationError(path, actual_value={}, missing_key="missing_key")
 
     with when:
         res = error.format(formatter)
@@ -290,7 +290,8 @@ def test_format_missing_key_error(path: PathHolder, formatted: str, *, formatter
 ])
 def test_format_extra_key_error(path: PathHolder, formatted: str, *, formatter: Formatter):
     with given:
-        error = ExtraKeyValidationError(path, actual_value={"extra_key": "value"}, key="extra_key")
+        value = {"extra_key": "value"}
+        error = ExtraKeyValidationError(path, actual_value=value, extra_key="extra_key")
 
     with when:
         res = error.format(formatter)

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 __all__ = ("ValidationError", "TypeValidationError", "ValueValidationError",
            "MinValueValidationError", "MaxValueValidationError", "LengthValidationError",
            "MinLengthValidationError", "MaxLengthValidationError", "AlphabetValidationError",
-           "SubstrValidationError", "RegexValidationError", "IndexValidationError",
+           "SubstrValidationError", "RegexValidationError", "MissingElementValidationError",
            "ExtraElementValidationError", "MissingKeyValidationError", "ExtraKeyValidationError",
            "SchemaMismatchValidationError",)
 
@@ -164,14 +164,14 @@ class RegexValidationError(ValidationError):
                 f"{self.pattern!r})")
 
 
-class IndexValidationError(ValidationError):
+class MissingElementValidationError(ValidationError):
     def __init__(self, path: PathHolder, actual_value: Any, index: int) -> None:
         self.path = path
         self.actual_value = actual_value
         self.index = index
 
     def format(self, formatter: "Formatter") -> str:
-        return formatter.format_index_error(self)
+        return formatter.format_missing_element_error(self)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, {self.index!r})"
@@ -191,10 +191,10 @@ class ExtraElementValidationError(ValidationError):
 
 
 class MissingKeyValidationError(ValidationError):
-    def __init__(self, path: PathHolder, actual_value: Any, key: Any) -> None:
+    def __init__(self, path: PathHolder, actual_value: Any, missing_key: Any) -> None:
         self.path = path
         self.actual_value = actual_value
-        self.missing_key = key
+        self.missing_key = missing_key
 
     def format(self, formatter: "Formatter") -> str:
         return formatter.format_missing_key_error(self)
@@ -205,10 +205,10 @@ class MissingKeyValidationError(ValidationError):
 
 
 class ExtraKeyValidationError(ValidationError):
-    def __init__(self, path: PathHolder, actual_value: Any, key: Any) -> None:
+    def __init__(self, path: PathHolder, actual_value: Any, extra_key: Any) -> None:
         self.path = path
         self.actual_value = actual_value
-        self.extra_key = key
+        self.extra_key = extra_key
 
     def format(self, formatter: "Formatter") -> str:
         return formatter.format_extra_key_error(self)
