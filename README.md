@@ -84,6 +84,10 @@ assert validate_or_fail(schema.int, 42)
   * [Any](#any)
     * [schema.any](#schemaany)
     * [schema.any(`*types`)](#schemaanytypes)
+  * [Custom Types](#custom-types)
+    * [1. Declare Schema](#1-declare-schema)
+    * [2. Register Validator](#2-register-validator)
+    * [3. Use](#3-use)
 
 ### None
 
@@ -436,3 +440,71 @@ assert sch == "banana"
 
 assert sch != 42  # incorrect type
 ```
+
+### Custom Types
+
+#### 1. Declare Schema
+
+```python
+from typing import Any
+from uuid import UUID
+from district42 import Props, SchemaVisitor, SchemaVisitorReturnType as ReturnType
+from district42.types import Schema
+from niltype import Nilable
+
+
+class UUIDProps(Props):
+    @property
+    def value(self) -> Nilable[UUID]:
+        return self.get("value")
+
+
+class UUIDSchema(Schema[UUIDProps]):
+    def __accept__(self, visitor: SchemaVisitor[ReturnType], **kwargs: Any) -> ReturnType:
+        return visitor.visit_uuid(self, **kwargs)
+
+    def __call__(self, /, value: UUID) -> "UUIDSchema":
+        return self.__class__(self.props.update(value=value))
+```
+
+#### 2. Register Validator
+
+```python
+from typing import Any
+from uuid import UUID
+from niltype import Nil, Nilable
+from th import PathHolder
+from valera import ValidationResult, Validator
+
+
+class UUIDValidator(Validator, extend=True):
+    def visit_uuid(self, schema: UUIDSchema, *,
+                   value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                   **kwargs: Any) -> ValidationResult:
+        result = self._validation_result_factory()
+        if path is Nil:
+            path = self._path_holder_factory()
+
+        if error := self._validate_type(path, value, UUID):
+            return result.add_error(error)
+
+        if schema.props.value is not Nil:
+            if error := self._validate_value(path, value, schema.props.value):
+                return result.add_error(error)
+
+        return result
+```
+
+#### 3. Use
+
+```python
+from uuid import uuid4
+from district42 import register_type, schema
+from valera import validate_or_fail
+
+register_type("uuid", UUIDSchema)
+
+assert validate_or_fail(schema.uuid, uuid4())
+```
+
+Full code available here: [district42_exp_types/uuid](https://github.com/nikitanovosibirsk/district42-exp-types/tree/master/district42_exp_types/uuid)
