@@ -7,6 +7,7 @@ from district42 import GenericSchema, SchemaVisitor
 from district42.types import (
     AnySchema,
     BoolSchema,
+    BytesSchema,
     ConstSchema,
     DictSchema,
     FloatSchema,
@@ -322,6 +323,22 @@ class Validator(SchemaVisitor[ValidationResult]):
         result = self._validation_result_factory()
         if path is Nil:
             path = self._path_holder_factory()
+
+        if schema.props.value is not Nil:
+            if error := self._validate_value(path, value, schema.props.value):
+                return result.add_error(error)
+
+        return result
+
+    def visit_bytes(self, schema: BytesSchema, *,
+                    value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                    **kwargs: Any) -> ValidationResult:
+        result = self._validation_result_factory()
+        if path is Nil:
+            path = self._path_holder_factory()
+
+        if error := self._validate_type(path, value, bytes):
+            return result.add_error(error)
 
         if schema.props.value is not Nil:
             if error := self._validate_value(path, value, schema.props.value):
