@@ -11,10 +11,12 @@ from district42.types import (
     ConstSchema,
     DictSchema,
     FloatSchema,
+    GenericTypeAliasSchema,
     IntSchema,
     ListSchema,
     NoneSchema,
     StrSchema,
+    TypeAliasPropsType,
 )
 from district42.utils import is_ellipsis
 from niltype import Nil, Nilable
@@ -345,3 +347,8 @@ class Validator(SchemaVisitor[ValidationResult]):
                 return result.add_error(error)
 
         return result
+
+    def visit_type_alias(self, schema: GenericTypeAliasSchema[TypeAliasPropsType], *,
+                         value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                         **kwargs: Any) -> ValidationResult:
+        return schema.props.type.__accept__(self, value=value, path=path, **kwargs)
