@@ -154,3 +154,15 @@ def test_float_type_validation_kwargs():
         assert result.get_errors() == [
             ValueValidationError(path, actual_value, expected_value)
         ]
+
+
+@pytest.mark.parametrize("value", [3.1, 3.14, 3.151, -3.1, -3.14, -3.151, 3.12345])
+def test_float_precision_validation(value: float):
+    with given:
+        precision = 3
+
+    with when:
+        result = validate(schema.float.precision(precision), value)
+
+    with then:
+        assert result.get_errors() == []
