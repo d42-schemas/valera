@@ -18,9 +18,13 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     author="Nikita Tsvetkov",
-    author_email="nikitanovosibirsk@yandex.com",
+    author_email="tsv1@fastmail.com",
     python_requires=">=3.8",
-    url="https://github.com/nikitanovosibirsk/valera",
+    url="https://github.com/tsv1/valera",
+    project_urls={
+        "Docs": "https://d42.vedro.io",
+        "GitHub": "https://github.com/tsv1/valera",
+    },
     license="Apache-2.0",
     packages=find_packages(exclude=("tests",)),
     package_data={"valera": ["py.typed"]},
@@ -31,6 +35,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Typing :: Typed",
     ],
 )
