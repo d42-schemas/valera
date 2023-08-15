@@ -2,6 +2,7 @@ import re
 from copy import deepcopy
 from math import isclose
 from typing import Any, Callable, List, Optional, Type, cast
+from uuid import UUID
 
 from district42 import GenericSchema, SchemaVisitor
 from district42.types import (
@@ -17,6 +18,7 @@ from district42.types import (
     NoneSchema,
     StrSchema,
     TypeAliasPropsType,
+    UUID4Schema,
 )
 from district42.utils import is_ellipsis
 from niltype import Nil, Nilable
@@ -27,6 +29,7 @@ from .errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
+    InvalidUUIDVersionValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
@@ -352,3 +355,23 @@ class Validator(SchemaVisitor[ValidationResult]):
                          value: Any = Nil, path: Nilable[PathHolder] = Nil,
                          **kwargs: Any) -> ValidationResult:
         return schema.props.type.__accept__(self, value=value, path=path, **kwargs)
+
+    def visit_uuid4(self, schema: UUID4Schema, *,
+                    value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                    **kwargs: Any) -> ValidationResult:
+        result = self._validation_result_factory()
+        if path is Nil:
+            path = self._path_holder_factory()
+
+        if error := self._validate_type(path, value, UUID):
+            return result.add_error(error)
+
+        if value.version != 4:
+            return result.add_error(
+                InvalidUUIDVersionValidationError(path, value, value.version, 4))
+
+        if schema.props.value is not Nil:
+            if error := self._validate_value(path, value, schema.props.value):
+                return result.add_error(error)
+
+        return result
