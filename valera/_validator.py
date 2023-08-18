@@ -1,5 +1,6 @@
 import re
 from copy import deepcopy
+from datetime import datetime
 from math import isclose
 from typing import Any, Callable, List, Optional, Type, cast
 from uuid import UUID
@@ -10,6 +11,7 @@ from district42.types import (
     BoolSchema,
     BytesSchema,
     ConstSchema,
+    DateTimeSchema,
     DictSchema,
     FloatSchema,
     GenericTypeAliasSchema,
@@ -150,8 +152,15 @@ class Validator(SchemaVisitor[ValidationResult]):
             return result.add_error(error)
 
         if schema.props.value is not Nil:
-            if not isclose(value, schema.props.value):
-                return result.add_error(ValueValidationError(path, value, schema.props.value))
+            if schema.props.precision is Nil:
+                if not isclose(value, schema.props.value):
+                    return result.add_error(ValueValidationError(path, value, schema.props.value))
+            else:
+                scale_factor = 10 ** schema.props.precision
+                scaled_actual = round(value * scale_factor)
+                scaled_expected = round(schema.props.value * scale_factor)
+                if not isclose(scaled_expected, scaled_actual, rel_tol=0, abs_tol=0):
+                    return result.add_error(ValueValidationError(path, value, schema.props.value))
 
         if schema.props.min is not Nil:
             if value < schema.props.min:
@@ -356,22 +365,38 @@ class Validator(SchemaVisitor[ValidationResult]):
                          **kwargs: Any) -> ValidationResult:
         return schema.props.type.__accept__(self, value=value, path=path, **kwargs)
 
-    def visit_uuid4(self, schema: UUID4Schema, *,
-                    value: Any = Nil, path: Nilable[PathHolder] = Nil,
-                    **kwargs: Any) -> ValidationResult:
+    def visit_datetime(self, schema: DateTimeSchema, *,
+                       value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                       **kwargs: Any) -> ValidationResult:
         result = self._validation_result_factory()
         if path is Nil:
             path = self._path_holder_factory()
 
-        if error := self._validate_type(path, value, UUID):
+        if error := self._validate_type(path, value, datetime):
             return result.add_error(error)
-
-        if value.version != 4:
-            return result.add_error(
-                InvalidUUIDVersionValidationError(path, value, value.version, 4))
 
         if schema.props.value is not Nil:
             if error := self._validate_value(path, value, schema.props.value):
                 return result.add_error(error)
 
         return result
+
+    def visit_uuid4(self, schema: UUID4Schema, *,
+                     value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                     **kwargs: Any) -> ValidationResult:
+         result = self._validation_result_factory()
+         if path is Nil:
+             path = self._path_holder_factory()
+
+         if error := self._validate_type(path, value, UUID):
+             return result.add_error(error)
+
+         if value.version != 4:
+             return result.add_error(
+                 InvalidUUIDVersionValidationError(path, value, value.version, 4))
+
+         if schema.props.value is not Nil:
+             if error := self._validate_value(path, value, schema.props.value):
+                 return result.add_error(error)
+
+         return result
