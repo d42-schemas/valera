@@ -156,7 +156,7 @@ def test_float_type_validation_kwargs():
         ]
 
 
-@pytest.mark.parametrize("value", [3.1, 3.14, 3.151, -3.1, -3.14, -3.151, 3.12345])
+@pytest.mark.parametrize("value", [-3.14, 3.0, 3.1, 3.14])
 def test_float_precision_validation(value: float):
     with given:
         precision = 3
@@ -166,3 +166,55 @@ def test_float_precision_validation(value: float):
 
     with then:
         assert result.get_errors() == []
+
+
+@pytest.mark.parametrize("value", [9.00, 9.001, 9.004])
+def test_float_pos_value_with_precision_validation(value: float):
+    with given:
+        sch = schema.float(9.00).precision(2)
+
+    with when:
+        result = validate(sch, value)
+
+    with then:
+        assert result.get_errors() == []
+
+
+@pytest.mark.parametrize("value", [-9.00, -9.001, -9.004])
+def test_float_neg_value_with_precision_validation(value: float):
+    with given:
+        sch = schema.float(-9.00).precision(2)
+
+    with when:
+        result = validate(sch, value)
+
+    with then:
+        assert result.get_errors() == []
+
+
+@pytest.mark.parametrize("value", [9.005, 9.01, -9.00])
+def test_float_pos_value_with_precision_validation_error(value: float):
+    with given:
+        sch = schema.float(9.00).precision(2)
+
+    with when:
+        result = validate(sch, value)
+
+    with then:
+        assert result.get_errors() == [
+            ValueValidationError(PathHolder(), value, 9.00)
+        ]
+
+
+@pytest.mark.parametrize("value", [9.005, 9.01, -9.00])
+def test_float_neg_value_with_precision_validation_error(value: float):
+    with given:
+        sch = schema.float(9.00).precision(2)
+
+    with when:
+        result = validate(sch, value)
+
+    with then:
+        assert result.get_errors() == [
+            ValueValidationError(PathHolder(), value, 9.00)
+        ]
