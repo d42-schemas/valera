@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import pytest
 from baby_steps import given, then, when
 from district42 import schema
 from th import PathHolder
