@@ -1,8 +1,20 @@
 # Changelog
 
+## v1.6
+
+### v1.6.0 (2023-08-18)
+
+- Add `schema.datetime` type [#7](https://github.com/tsv1/valera/pull/7)
+- Add `schema.uuid4` type [#6](https://github.com/tsv1/valera/pull/6)
+- Add `schema.float.precision` [#4](https://github.com/tsv1/valera/pull/4)
+
+## v1.5
+
 ### v1.5.0 (2022-02-01)
 
 - Add type aliases [#3](https://github.com/tsv1/valera/pull/3)
+
+## v1.4
 
 ### v1.4.0 (2021-12-05)
 
