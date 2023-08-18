@@ -382,21 +382,21 @@ class Validator(SchemaVisitor[ValidationResult]):
         return result
 
     def visit_uuid4(self, schema: UUID4Schema, *,
-                     value: Any = Nil, path: Nilable[PathHolder] = Nil,
-                     **kwargs: Any) -> ValidationResult:
-         result = self._validation_result_factory()
-         if path is Nil:
-             path = self._path_holder_factory()
+                    value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                    **kwargs: Any) -> ValidationResult:
+        result = self._validation_result_factory()
+        if path is Nil:
+            path = self._path_holder_factory()
 
-         if error := self._validate_type(path, value, UUID):
-             return result.add_error(error)
+        if error := self._validate_type(path, value, UUID):
+            return result.add_error(error)
 
-         if value.version != 4:
-             return result.add_error(
-                 InvalidUUIDVersionValidationError(path, value, value.version, 4))
+        if value.version != 4:
+            return result.add_error(
+                InvalidUUIDVersionValidationError(path, value, value.version, 4))
 
-         if schema.props.value is not Nil:
-             if error := self._validate_value(path, value, schema.props.value):
-                 return result.add_error(error)
+        if schema.props.value is not Nil:
+            if error := self._validate_value(path, value, schema.props.value):
+                return result.add_error(error)
 
-         return result
+        return result
