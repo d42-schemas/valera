@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from baby_steps import given, then, when
 from district42 import schema
@@ -8,6 +10,7 @@ from valera.errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
+    InvalidUUIDVersionValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
@@ -309,6 +312,26 @@ def test_format_schema_missmatch_error(path: PathHolder, formatted: str, *, form
     with given:
         error = SchemaMismatchValidationError(path, actual_value=42,
                                               expected_schemas=(schema.str, schema.none))
+
+    with when:
+        res = error.format(formatter)
+
+    with then:
+        assert res == formatted
+
+
+@pytest.mark.parametrize(("path", "formatted"), [
+    (_, "Value <class 'uuid.UUID'> must be a UUID version 4, "
+        "but UUID('886313e1-3b8a-5372-9b90-0c9aee199e5d') version 5 given"),
+    (_["id"], "Value <class 'uuid.UUID'> at _['id'] must be a UUID version 4, "
+              "but UUID('886313e1-3b8a-5372-9b90-0c9aee199e5d') version 5 given"),
+])
+def test_format_invalid_uuid_version_error(path: PathHolder, formatted: str, *,
+                                           formatter: Formatter):
+    with given:
+        uuid5 = uuid.UUID("886313e1-3b8a-5372-9b90-0c9aee199e5d", version=5)
+        error = InvalidUUIDVersionValidationError(path, actual_value=uuid5, actual_version=5,
+                                                  expected_version=4)
 
     with when:
         res = error.format(formatter)

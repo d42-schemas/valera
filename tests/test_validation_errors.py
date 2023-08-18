@@ -1,3 +1,5 @@
+import uuid
+
 from baby_steps import given, then, when
 from district42.types import IntSchema
 from th import PathHolder
@@ -6,6 +8,7 @@ from valera.errors import (
     AlphabetValidationError,
     ExtraElementValidationError,
     ExtraKeyValidationError,
+    InvalidUUIDVersionValidationError,
     LengthValidationError,
     MaxLengthValidationError,
     MaxValueValidationError,
@@ -143,3 +146,15 @@ def test_validation_schema_mismatch_error():
 
     with then:
         assert repr(res) == "SchemaMismatchValidationError(PathHolder(), 'key', (schema.int,))"
+
+
+def test_validation_invalid_uuid_version_error():
+    with given:
+        uuid5 = uuid.UUID("886313e1-3b8a-5372-9b90-0c9aee199e5d", version=5)
+
+    with when:
+        res = InvalidUUIDVersionValidationError(PathHolder(), uuid5, 5, 4)
+
+    with then:
+        assert repr(res) == ("InvalidUUIDVersionValidationError(PathHolder(), "
+                             "UUID('886313e1-3b8a-5372-9b90-0c9aee199e5d'), 5, 4)")

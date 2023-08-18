@@ -12,7 +12,7 @@ __all__ = ("ValidationError", "TypeValidationError", "ValueValidationError",
            "MinLengthValidationError", "MaxLengthValidationError", "AlphabetValidationError",
            "SubstrValidationError", "RegexValidationError", "MissingElementValidationError",
            "ExtraElementValidationError", "MissingKeyValidationError", "ExtraKeyValidationError",
-           "SchemaMismatchValidationError",)
+           "SchemaMismatchValidationError", "InvalidUUIDVersionValidationError",)
 
 
 class ValidationError(ABC):
@@ -231,3 +231,19 @@ class SchemaMismatchValidationError(ValidationError):
     def __repr__(self) -> str:
         return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
                 f"{self.expected_schemas!r})")
+
+
+class InvalidUUIDVersionValidationError(ValidationError):
+    def __init__(self, path: PathHolder, actual_value: Any,
+                 actual_version: int, expected_version: int) -> None:
+        self.path = path
+        self.actual_value = actual_value
+        self.actual_version = actual_version
+        self.expected_version = expected_version
+
+    def format(self, formatter: "Formatter") -> str:
+        return formatter.format_invalid_uuid_version_error(self)
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}({self.path!r}, {self.actual_value!r}, "
+                f"{self.actual_version!r}, {self.expected_version!r})")
