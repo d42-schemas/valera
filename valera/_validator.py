@@ -1,5 +1,6 @@
 import re
 from copy import deepcopy
+from datetime import datetime
 from math import isclose
 from typing import Any, Callable, List, Optional, Type, cast
 
@@ -362,8 +363,21 @@ class Validator(SchemaVisitor[ValidationResult]):
                          **kwargs: Any) -> ValidationResult:
         return schema.props.type.__accept__(self, value=value, path=path, **kwargs)
 
-    def visit_uuid4(self, schema: UUID4Schema, **kwargs: Any) -> ValidationResult:
-        raise NotImplementedError()
+    def visit_datetime(self, schema: DateTimeSchema, *,
+                       value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                       **kwargs: Any) -> ValidationResult:
+        result = self._validation_result_factory()
+        if path is Nil:
+            path = self._path_holder_factory()
 
-    def visit_datetime(self, schema: DateTimeSchema, **kwargs: Any) -> ValidationResult:
+        if error := self._validate_type(path, value, datetime):
+            return result.add_error(error)
+
+        if schema.props.value is not Nil:
+            if error := self._validate_value(path, value, schema.props.value):
+                return result.add_error(error)
+
+        return result
+
+    def visit_uuid4(self, schema: UUID4Schema, **kwargs: Any) -> ValidationResult:
         raise NotImplementedError()
