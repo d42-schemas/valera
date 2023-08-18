@@ -17,6 +17,8 @@ from district42.types import (
     NoneSchema,
     StrSchema,
     TypeAliasPropsType,
+    UUID4Schema,
+    DateTimeSchema
 )
 from district42.utils import is_ellipsis
 from niltype import Nil, Nilable
@@ -147,7 +149,9 @@ class Validator(SchemaVisitor[ValidationResult]):
             return result.add_error(error)
 
         if schema.props.value is not Nil:
-            if not isclose(value, schema.props.value):
+            if not isclose(value, schema.props.value, rel_tol=10 ** -schema.props.precision
+                           if schema.props.precision is not Nil else 1e-09):
+                print(schema.props.precision)
                 return result.add_error(ValueValidationError(path, value, schema.props.value))
 
         if schema.props.min is not Nil:
@@ -352,3 +356,9 @@ class Validator(SchemaVisitor[ValidationResult]):
                          value: Any = Nil, path: Nilable[PathHolder] = Nil,
                          **kwargs: Any) -> ValidationResult:
         return schema.props.type.__accept__(self, value=value, path=path, **kwargs)
+
+    def visit_uuid4(self, schema: UUID4Schema, **kwargs: Any) -> ValidationResult:
+        pass
+
+    def visit_datetime(self, schema: DateTimeSchema, **kwargs: Any) -> ValidationResult:
+        pass
