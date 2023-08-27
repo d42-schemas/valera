@@ -57,6 +57,12 @@ class Validator(SchemaVisitor[ValidationResult]):
         self._validation_result_factory = validation_result_factory
         self._path_holder_factory = path_holder_factory
 
+    def make_validation_result(self) -> ValidationResult:
+        return self._validation_result_factory()
+
+    def make_path(self) -> PathHolder:
+        return self._path_holder_factory()
+
     def _validate_type(self, path: PathHolder, value: Any,
                        expected_type: Type[Any]) -> Optional[ValidationError]:
         if not isinstance(value, expected_type):
@@ -88,6 +94,12 @@ class Validator(SchemaVisitor[ValidationResult]):
                 res = element_schema.__accept__(self, value=val, path=nested_path, **kwargs)
                 errors += res.get_errors()
         return errors
+
+    def visit(self, schema: GenericSchema, *, value: Any = Nil, path: Nilable[PathHolder] = Nil,
+              **kwargs: Any) -> ValidationResult:
+        if validate_method := getattr(schema, "__valera__", None):
+            return cast(ValidationResult, validate_method(self, value=value, path=path, **kwargs))
+        raise NotImplementedError(f"{schema.__class__.__name__} has no method '__valera__'")
 
     def visit_none(self, schema: NoneSchema, *,
                    value: Any = Nil, path: Nilable[PathHolder] = Nil,

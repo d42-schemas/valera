@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.7
+
+### v1.7.0 (2023-08-27)
+
+- Add visit method for custom types [#8](https://github.com/tsv1/valera/pull/8)
+- Add `format_result` method [#8](https://github.com/tsv1/valera/pull/8)
+
 ## v1.6
 
 ### v1.6.0 (2023-08-18)

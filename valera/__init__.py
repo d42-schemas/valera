@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 from district42 import GenericSchema
 from district42.types import Schema
@@ -10,7 +10,7 @@ from ._validator import Validator
 from ._version import version
 
 __version__ = version
-__all__ = ("validate", "validate_or_fail", "eq", "Validator", "ValidationResult",
+__all__ = ("validate", "validate_or_fail", "eq", "format_result", "Validator", "ValidationResult",
            "ValidationException", "Formatter", "AbstractFormatter",)
 
 
@@ -39,6 +39,13 @@ def eq(schema: GenericSchema, value: Any) -> bool:
     if isinstance(value, Schema):
         return isinstance(value, schema.__class__) and (schema.props == value.props)
     return not validate(schema, value=value).has_errors()
+
+
+def format_result(result: ValidationResult, formatter: Formatter = _formatter) -> List[str]:
+    if not result.has_errors():
+        return []
+    errors = ["- " + e.format(formatter) for e in result.get_errors()]
+    return ["valera.ValidationException"] + errors
 
 
 Schema.__override__(Schema.__eq__.__name__, eq)
