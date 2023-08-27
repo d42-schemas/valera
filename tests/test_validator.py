@@ -3,7 +3,6 @@ from unittest.mock import Mock, call, sentinel
 from baby_steps import given, then, when
 from district42 import Props
 from district42.types import Schema
-from niltype import Nil
 from pytest import raises
 from th import PathHolder
 
@@ -44,12 +43,12 @@ def test_validator_visit():
         validator = Validator()
 
     with when:
-        res = validator.visit(custom_type)
+        res = validator.visit(custom_type, value=sentinel.value, path=sentinel.path)
 
     with then:
         assert res is sentinel.visited
         assert mock.mock_calls == [
-            call(validator, value=Nil, path=Nil)
+            call(validator, value=sentinel.value, path=sentinel.path)
         ]
 
 
