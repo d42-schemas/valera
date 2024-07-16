@@ -1,6 +1,6 @@
 import re
 from copy import deepcopy
-from datetime import datetime
+from datetime import date, datetime
 from math import isclose
 from typing import Any, Callable, List, Optional, Type, cast
 from uuid import UUID
@@ -11,6 +11,7 @@ from district42.types import (
     BoolSchema,
     BytesSchema,
     ConstSchema,
+    DateSchema,
     DateTimeSchema,
     DictSchema,
     FloatSchema,
@@ -406,6 +407,22 @@ class Validator(SchemaVisitor[ValidationResult]):
         if value.version != 4:
             return result.add_error(
                 InvalidUUIDVersionValidationError(path, value, value.version, 4))
+
+        if schema.props.value is not Nil:
+            if error := self._validate_value(path, value, schema.props.value):
+                return result.add_error(error)
+
+        return result
+
+    def visit_date(self, schema: DateSchema, *,
+                   value: Any = Nil, path: Nilable[PathHolder] = Nil,
+                   **kwargs: Any) -> ValidationResult:
+        result = self._validation_result_factory()
+        if path is Nil:
+            path = self._path_holder_factory()
+
+        if error := self._validate_type(path, value, date):
+            return result.add_error(error)
 
         if schema.props.value is not Nil:
             if error := self._validate_value(path, value, schema.props.value):
