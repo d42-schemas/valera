@@ -13,7 +13,7 @@ def find_dev_required():
 
 setup(
     name="valera",
-    version="1.7.0",
+    version="1.8.0",
     description="Validator for district42 schema",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
