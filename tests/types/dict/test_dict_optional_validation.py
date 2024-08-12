@@ -6,7 +6,7 @@ from district42 import optional, schema
 from th import PathHolder
 
 from valera import validate
-from valera.errors import TypeValidationError
+from valera.errors import ExtraKeyValidationError, TypeValidationError
 
 
 @pytest.mark.parametrize("value", [
@@ -63,4 +63,26 @@ def test_dict_relaxed_with_optional_key_validation_error():
     with then:
         assert result.get_errors() == [
             TypeValidationError(PathHolder()["name"], None, str)
+        ]
+
+
+def test_dict_extra_key_with_optional_validation():
+    with given:
+        sch = schema.dict({
+            "id": schema.int,
+            "name": schema.str,
+            optional("created_at"): schema.str,
+        })
+        value = {
+            "id": 1,
+            "name": "Bob",
+            "extra": "unexpected"
+        }
+
+    with when:
+        result = validate(sch, value)
+
+    with then:
+        assert result.get_errors() == [
+            ExtraKeyValidationError(PathHolder(), value, "extra")
         ]

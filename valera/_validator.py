@@ -319,7 +319,7 @@ class Validator(SchemaVisitor[ValidationResult]):
                 if not is_optional:
                     result.add_error(MissingKeyValidationError(path, value, key))
 
-        if (... not in schema.props.keys) and (len(schema.props.keys) != len(value)):
+        if (... not in schema.props.keys):
             for key, val in value.items():
                 if key not in schema.props.keys:
                     result.add_error(ExtraKeyValidationError(path, value, key))
