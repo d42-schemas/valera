@@ -149,7 +149,7 @@ def test_dict_nested_keys_validation():
         assert result.get_errors() == []
 
 
-def test_dict_nested_extra_key_valudidation_error():
+def test_dict_nested_extra_key_validation_error():
     with given:
         sch = schema.dict({
             "result": schema.dict({
@@ -173,7 +173,7 @@ def test_dict_nested_extra_key_valudidation_error():
         ]
 
 
-def test_dict_nested_missing_key_valudidation_error():
+def test_dict_nested_missing_key_validation_error():
     with given:
         sch = schema.dict({
             "result": schema.dict({
