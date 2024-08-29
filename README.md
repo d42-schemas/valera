@@ -7,4 +7,4 @@
 
 `valera` is a package designed to validate data based on the [district42](https://github.com/d42-schemas/district42) schemas. It provides a simple and flexible way for validating data against a defined schema.
 
-This package is part of the [d42 package](https://pypi.org/project/d42/). For a quick-start guide and detailed documentation, please visit the official documentation at [d42.vedro.io/docs/quick-start](https://d42.vedro.io/docs/quick-start)
+This package is part of the [d42 package](https://pypi.org/project/d42/). For a quick-start guide and detailed documentation, please visit the official documentation at [d42.sh/docs/quick-start](https://d42.sh/docs/quick-start)

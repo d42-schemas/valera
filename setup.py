@@ -22,7 +22,7 @@ setup(
     python_requires=">=3.8",
     url="https://github.com/d42-schemas/valera",
     project_urls={
-        "Docs": "https://d42.vedro.io",
+        "Docs": "https://d42.sh",
         "GitHub": "https://github.com/d42-schemas/valera",
     },
     license="Apache-2.0",
